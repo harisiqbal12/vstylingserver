@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOWDATABASE")
+}
+
+model User {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  name     String
+  imageURI String?
+  number   String  @unique
+
+  createdAt DateTime @default(now())
+}
+
+model Item {
+  id                String   @id @default(uuid())
+  name              String
+  slug              String   @unique
+  short_description String?
+  details           String?
+  imageURI          String?
+  galleryImages     String[]
+
+  price    Float
+  quantity Int
+
+  hot         Boolean? @default(false)
+  featured    Boolean? @default(false)
+  new_arrival Boolean? @default(true)
+
+  brand_id        String
+  maincategory_id String
+  subcategory_id  String
+
+  brand        Brands     @relation(name: "productBrand", fields: [brand_id], references: [id])
+  maincategory Categories @relation(name: "productCategoryMain", fields: [maincategory_id], references: [id])
+  subCategory  Categories @relation(name: "productCategorySub", fields: [subcategory_id], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Brands {
+  id       String  @id @default(uuid())
+  name     String
+  slug     String  @unique
+  imageURI String?
+
+  products Item[] @relation(name: "productBrand")
+
+  createdAt DateTime @default(now())
+}
+
+model Categories {
+  id String @id @default(uuid())
+
+  name     String
+  slug     String  @unique
+  parentId String?
+  imageURI String?
+
+  type CategoryTypes
+
+  parent Categories?  @relation(name: "parentCategory", references: [id], fields: [parentId])
+  child  Categories[] @relation(name: "parentCategory")
+
+  main Item[] @relation(name: "productCategoryMain")
+  sub  Item[] @relation(name: "productCategorySub")
+
+  createdAt DateTime @default(now())
+}
+
+enum CategoryTypes {
+  MAIN
+  SUB
+}
