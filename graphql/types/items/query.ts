@@ -14,8 +14,8 @@ export const ItemsQuery = extendType({
 						where: {
 							new_arrival: args.new_arrival,
 							maincategory: {
-								slug: "eyewears"
-							}
+								slug: 'eyewears',
+							},
 						},
 
 						take: 20,
@@ -38,6 +38,19 @@ export const ItemsQuery = extendType({
 				return ctx.prisma.item.findUnique({
 					where: {
 						id: args.id,
+					},
+				});
+			},
+		});
+
+		t.list.field('exploreItems', {
+			type: 'Items',
+			args: {},
+			resolve: (_, args, ctx) => {
+				return ctx.prisma.item.findMany({
+					take: 40,
+					orderBy: {
+						createdAt: 'desc',
 					},
 				});
 			},

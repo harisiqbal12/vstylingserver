@@ -57,6 +57,7 @@ type Query {
   allUsers: [User]
   brands: [Brands]
   categoryProduct(slug: String!): Category
+  exploreItems: [Items]
   item(id: String!): Items
   items(new_arrival: Boolean): [Items]
   mainCategories: [Category]
